@@ -26,19 +26,17 @@ ERRORS:  38
 
 ```
 
-## Solution
+## Run the script locally
+In orden to run the script locally you should clone the repository
 
-Get sure to have [NODE JS](https://nodejs.org) installed 
+First get sure to have [NODE JS](https://nodejs.org) installed, if you have it, you should see something similar to:
 
 ```sh
 node --version
 v14.17.4
 ```
-If you have `NODE JS` installed you should see something similar
 
-
-## Run the script locally
-In orden to run the script locally you should clone the repository
+To run it locally:
 
 ```sh
 git clone https://github.com/DiegoAWS/test-cinema-theatre.git
