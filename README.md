@@ -51,7 +51,7 @@ To run it agains the booking_requests file:
 node script.js booking_requests
 ```
 
-And to see a more detailed Errors view
+And to see a more detailed Errors view:
 
 ```sh
 node script.js booking_requests -d
