@@ -1,3 +1,16 @@
+//#region Make sure we got a filename on the command line.
+if (process.argv.length < 3) {
+  console.log("Usage:");
+  console.log("node booking.js textFile-whith-the-booking-data");
+  console.log();
+  console.log("To see errors details, add -d flags at the end");
+  console.log("Ex:");
+  console.log();
+  console.log("node script.js booking_requests -d");
+  process.exit(1);
+}
+//#endregion
+
 //#region Initial Conditions
 
 var amountOfRows = 100;
@@ -9,7 +22,7 @@ var initialSeats = Array(amountOfRows)
 // seats[Row][Column]=== false     ---------------->  seat Unoccupated, else Occupated
 
 var initialAccumulator = {
-  errors: 0,
+  errors: [],
   seats: initialSeats,
 };
 
@@ -51,15 +64,10 @@ function isLeftingGaps(seatsState, bookingInfo) {
   return gapBeffore || gapAffter;
 }
 
+const { Console } = require("console");
 //#endregion
 
-//#region Make sure we got a filename on the command line.
-if (process.argv.length < 3) {
-  console.log("Usage: node booking.js textFile-whith-the-booking-data");
-  process.exit(1);
-}
-//#endregion
-
+//#region main Code
 var fs = require("fs");
 
 var filename = process.argv[2];
@@ -79,6 +87,7 @@ fs.readFile(filename, "utf8", function (err, textContent) {
       // Checking the line follow the expected data pattern
 
       var booking = {
+        id: data.id,
         RowStart: Number(data.RowStart),
         RowEnd: Number(data.RowEnd),
         ColumnStart: Math.min(Number(data.ColumnStart), Number(data.ColumnEnd)),
@@ -116,7 +125,16 @@ fs.readFile(filename, "utf8", function (err, textContent) {
         areTheBookingSeatsOccuped ||
         areLeftingGaps
       ) {
-        accumulator.errors++;
+        accumulator.errors.push({
+          booking,
+          errorCause: {
+            seatsAreOutTheTheaterCapacity,
+            seatsAreNotInTheSameRow,
+            moreThanFiveSeats,
+            areTheBookingSeatsOccuped,
+            areLeftingGaps,
+          },
+        });
       } else {
         bookingSeats.forEach(function (item) {
           accumulator.seats[item.row][item.column] = true;
@@ -126,5 +144,16 @@ fs.readFile(filename, "utf8", function (err, textContent) {
     return accumulator;
   }, initialAccumulator);
 
-  console.log("ERRORS: ",bookingSystem.errors);
+  console.log("ERRORS: ", bookingSystem.errors.length);
+
+  if (
+    process.argv.length > 3 &&
+    (process.argv[3] === "-d" || process.argv[3] === "-D")
+  ) {
+    console.log("ERRORS DETAILS:");
+    console.log("-----------------------------");
+    console.log(bookingSystem.errors);
+  }
 });
+
+//#endregion
